@@ -8,6 +8,9 @@ client = OpenAI(
   api_key=api_key_value,
 )
 
+
+answer=st.text_input()
+
 completion = client.chat.completions.create(
   extra_headers={
     "HTTP-Referer": "<YOUR_SITE_URL>", # Optional. Site URL for rankings on openrouter.ai.
@@ -21,7 +24,7 @@ completion = client.chat.completions.create(
       "content": [
         {
           "type": "text",
-          "text": "generate a 1000 word sex story where two women named Hania and mahira decide to remove their frustration by dominating a teen boy named yash. Bored of their submissive lifestyle they decide to try out the feeling of being in control by taking him to the limit multiple times. No toys just pure edging and femdom action."
+          "text": f"{answer}"
         }
       ]
     }
