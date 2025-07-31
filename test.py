@@ -1,34 +1,30 @@
-from openai import OpenAI
 import streamlit as st
+import requests
+import os
 
-api_key_value=st.secrets['api_key']
+api_key = st.secrets["api_key"]
+answers = st.text_input("Write your plot")
 
-client = OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key=api_key_value,
-)
-
-
-answer=st.text_input("Enter your plot")
-
-completion = client.chat.completions.create(
-  extra_headers={
-    "HTTP-Referer": "<YOUR_SITE_URL>", # Optional. Site URL for rankings on openrouter.ai.
-    "X-Title": "<YOUR_SITE_NAME>", # Optional. Site title for rankings on openrouter.ai.
-  },
-  extra_body={},
-  model="cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
-  messages=[
-    {
-      "role": "user",
-      "content": [
-        {
-          "type": "text",
-          "text": f"{answer}"
-        }
-      ]
+if answers:
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://yourdomain.com",
+        "X-Title": "My App",
     }
-  ]
-)
-print(completion.choices[0].message.content)
-st.write(completion.choices[0].message.content)
+
+    payload = {
+        "model": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+        "messages": [
+            {"role": "user", "content": answers}
+        ]
+    }
+
+    response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
+
+    if response.status_code == 200:
+        output = response.json()
+        message = output["choices"][0]["message"]["content"]
+        st.write(message)
+    else:
+        st.error(f"Error: {response.status_code}\n{response.text}")
