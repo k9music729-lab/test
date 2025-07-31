@@ -9,7 +9,7 @@ client = OpenAI(
 )
 
 
-answer=st.text_input()
+answer=st.text_input("Enter your plot")
 
 completion = client.chat.completions.create(
   extra_headers={
